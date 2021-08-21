@@ -1,0 +1,206 @@
+import sqlite3 as sql
+import os
+import sys
+import time
+con=sql.connect("employee")
+cur=con.cursor()
+
+def insertdata():
+    id1=1
+    name=" "
+    age=1
+    gender=" "
+    email=" "
+    address=" "
+    dept=" "
+    salary=1
+    cal=1
+    try:
+        id1=int(input("Enter your id: "))
+        name=input("Enter  your name: ")
+        age=int(input("Enter your age: "))
+        gender=input("Enter your gender: ")
+        email=input("Enter your email: ")
+        address=input("Enter your address: ")
+        dept=input("Enter your dept u r working in: ")
+        salary=int(input("Enter your salary: "))
+        password=input("enter your  login password: ")
+        if salary>50000:
+            cal=salary+0.05*salary
+        elif salary>100000:
+            cal=salary+0.10*salary
+        elif salary>150000:
+            cal=salary+0.15*salary
+        else:
+            cal=salary
+        cur.execute("create table  if not exists employee(id int,name varchar(20),age int,gender varchar(6),email varchar(20),address varchar(30),dept varchar(20),salary int,password varchar(10))")
+        cur.execute("insert into employee values(%d,'%s',%d,'%s','%s','%s','%s',%d,'%s')"%(id1,name,age,gender,email,address,dept,cal,password))
+        con.commit()
+    except:
+        print("wrong input")
+        insertdata()
+        #con.close()
+def displaybyid():
+    id=int(input("enter the id: "))
+    cur.execute("select * from employee where id=%d"%(id))
+    for record in cur.fetchall():
+        print("ID :"+str(record[0]),end="     ")
+        print("NAME :"+record[1],end="     ")
+        print("AGE :"+str(record[2]),end="     ")
+        print("GENDER :"+record[3],end="     ")
+        print("EMAIL :"+record[4],end="     ")
+        print("ADDRESS :"+record[5],end="     ")
+        print("DEPT :"+record[6],end="     ")
+        print("SALARY:"+str(record[7]))
+       
+def displaybydept():
+    dept=input("Enter the dept: ")
+    cur.execute("select * from employee where dept='%s'"%(dept))
+    for record in cur.fetchall():
+        print("ID :"+str(record[0]),end="     ")
+        print("NAME :"+record[1],end="     ")
+        print("AGE :"+str(record[2]),end="     ")
+        print("GENDER :"+record[3],end="     ")
+        print("EMAIL :"+record[4],end="     ")
+        print("ADDRESS :"+record[5],end="     ")
+        print("DEPT :"+record[6],end="     ")
+        print("SALARY:"+str(record[7]))
+        
+def deleteall():
+    cur.execute("delete from employee")
+    con.commit()
+    print(" The details of all the employee has been deleted.........")
+def deletebyid():
+    id1=int(input("enter the id: "))
+    cur.execute("delete from employee where id=%d"%(id1))
+    con.commit()
+def updatebyid():
+    id1=int(input("Enter your id u want to upadte: "))
+    cur.execute("select * from employee where id=%d"%(id1))
+    if len(cur.fetchall())==0:
+       print("No Record Found")
+    else:
+        name=input("Enter name: ")
+        age=int(input("Enter your age: "))
+        gender=input("Enter your gender: ")
+        email=input("Enter your email: ")
+        address=input("Enter your address: ")
+        dept=input("Enter your dept u r working in: ")
+        salary=int(input("Enter your salary: "))
+        if salary>50000:
+            cal=salary+0.05*salary
+        elif salary>100000:
+            cal=salary+0.10*salary
+        elif salary>150000:
+            cal=salary+0.15*salary
+        else:
+            cal=salary
+        cur.execute("update employee set name='%s',age=%d,gender='%s',email='%s',address='%s',dept='%s',salary=%d where id=%d" %(name,age,gender,email,address,dept,cal,id1))
+        con.commit()
+        if cur.rowcount>0:
+            print("Record of the particular %d has been updated"%(id1))
+        else:
+            print("wrong input")
+def updatebydept():
+    dept=input("Enter your dept u want to update: ")
+    cur.execute("select * from employee where dept='%s'"%(dept))
+    if len(cur.fetchall())==0:
+        print("No Record Found......")
+    else:
+        name=input("Enter name: ")
+        age=int(input("Enter your age: "))
+        gender=input("Enter your gender: ")
+        email=input("Enter your email: ")
+        address=input("Enter your address: ")
+        salary=int(input("Enter your salary: "))
+        if salary>50000:
+            cal=salary+0.05*salary
+        elif salary>100000:
+            cal=salary+0.10*salary
+        elif salary>150000:
+            cal=salary+0.15*salary
+        else:
+            cal=salary
+        cur.execute("update employee set name='%s',age=%d,gender='%s',email='%s',address='%s',salary=%d where dept='%s'" %(name,age,gender,email,address,cal,dept))
+        con.commit()
+        if cur.rowcount>0:
+            print("Record of the particular %s has been updated"%(dept))
+        else:
+            print("Wrong Input")
+def extraallowance():
+    print("To check what all benefits u can have")
+    salary=int(input("enter your salary to know the details:"))
+    if salary>=50000 and salary<75000:
+        cal=0.10*salary
+        print("You are allowed for free health checkup once in a year")
+        print("The amount given by the company is:",cal)
+    elif salary>=75000 and salary<150000:
+        cal=0.10*salary
+        sal=0.15*salary
+        print("You are allowed for free health checkup once in a year")
+        print("You are allowed for a tour  in a year")
+        print("The amount given by the company is:",cal)
+        print("The amount given by the company for the tour is:",sal)
+    elif salary>=150000:
+        cal=0.10*salary
+        print("You are allowed for free health checkup once in a year and u are funded for tour")
+        print("The company provides you with a 2bhk flat")
+        print("The amount given by the company is:",cal)
+        sal=0.15*salary
+        print("The amount given by the company for the tour is:",sal)
+    else:
+        print("No benefits")
+        
+    
+    
+print("\n*******************************             WELCOME TO THE EMPLOYEE MANAGEMENT SYSTEM        *********************************  ")
+print("\n*******************************                   WAIT FOR A WHILE ITS LOADING               *********************************  ")
+print()
+for i in range(1,7):
+    print("*",end="   ")
+    time.sleep(1)
+while 1:
+    print(" \n1-New User ?  ?")
+    print(" 2-Already log in ??")
+    print(" 3-exit")
+    choice=int(input("enter your choice :"))
+    if choice==1:
+        print("Enter your details")
+        insertdata()
+        print("Thanks for registring with us..")
+    elif choice==2:
+        password=input("\nplease enter your password:")
+        cur.execute("select * from employee where password='%s'"%(password))
+        if len(cur.fetchall())==0:
+           print("no record found")
+        else:
+            print("\n1-Display the details of  the employee by their id.......")
+            print("\n2-Display the details of  the employee by their department....")
+            print("\n3-Delete the details of all the employee......")
+            print("\n4-Delete the details of the employee by their id......")
+            print("\n5-Update the details of  the employee by their id......")
+            print("\n6-Update the details of  the employee by his department.....")
+            print("\n7-Extra benefits by the company")
+            print("\n8-Exit")
+            ch=int(input("Enter your choice: "))
+            if ch==1:
+                displaybyid()
+            elif ch==2:
+                displaybydept()
+            elif ch==3:
+                deleteall()
+            elif ch==4:
+                deletebyid()
+            elif ch==5:
+                updatebyid()
+            elif ch==6:
+                updatebydept()
+            elif ch==7:
+                extraallowance()
+            else:
+                sys.exit()
+    else:
+        sys.exit()
+
+    
+    
